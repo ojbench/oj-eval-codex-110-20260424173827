@@ -4,10 +4,12 @@ using namespace std;
 
 static const int month_days_common[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
 
-struct Date {
+class Date {
+private:
     int _year;
     int _month;
     int _day;
+public:
 
     Date(): _year(1900), _month(1), _day(1) {}
     Date(int y, int m, int d) {
@@ -108,12 +110,11 @@ struct Date {
         if(_month!=other._month) return _month<other._month;
         return _day<other._day;
     }
+    friend ostream& operator<<(ostream& os, const Date& d){
+        os << d._year << '-' << d._month << '-' << d._day;
+        return os;
+    }
 };
-
-ostream& operator<<(ostream& os, const Date& d){
-    os << d._year << '-' << d._month << '-' << d._day;
-    return os;
-}
 
 int main(){
     ios::sync_with_stdio(false);
