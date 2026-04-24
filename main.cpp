@@ -1,4 +1,5 @@
-#include <bits/stdc++.h>
+// Implement Date operations per problem spec
+#include <iostream>
 using namespace std;
 
 static const int month_days_common[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
@@ -27,8 +28,8 @@ struct Date {
     }
 
     // helpers: convert to days since 1900-01-01 and back
-    static long to_serial(int y,int m,int d){
-        long days=0;
+    static long long to_serial(int y,int m,int d){
+        long long days=0;
         for(int yy=1900; yy<y; ++yy){
             days += is_leap(yy)?366:365;
         }
@@ -40,10 +41,17 @@ struct Date {
         return days;
     }
 
-    static void from_serial(long s, int &y,int &m,int &d){
+    static void from_serial(long long s, int &y,int &m,int &d){
         y = 1900;
+        // support negative serials by moving to previous years
+        while(s < 0){
+            int py = y - 1;
+            long long year_days_prev = is_leap(py)?366:365;
+            s += year_days_prev;
+            y = py;
+        }
         while(true){
-            long year_days = is_leap(y)?366:365;
+            long long year_days = is_leap(y)?366:365;
             if(s >= year_days){ s -= year_days; ++y; }
             else break;
         }
@@ -58,7 +66,7 @@ struct Date {
 
     // ++/-- and +/- days
     Date& operator++(){ // prefix
-        long s = to_serial(_year,_month,_day);
+        long long s = to_serial(_year,_month,_day);
         from_serial(s+1, _year,_month,_day);
         return *this;
     }
@@ -68,7 +76,7 @@ struct Date {
         return old;
     }
     Date& operator--(){ // prefix
-        long s = to_serial(_year,_month,_day);
+        long long s = to_serial(_year,_month,_day);
         from_serial(s-1, _year,_month,_day);
         return *this;
     }
@@ -78,21 +86,21 @@ struct Date {
         return old;
     }
 
-    Date operator+(long days) const{
-        long s = to_serial(_year,_month,_day);
+    Date operator+(long long days) const{
+        long long s = to_serial(_year,_month,_day);
         Date r; from_serial(s+days, r._year,r._month,r._day);
         return r;
     }
-    Date operator-(long days) const{
-        long s = to_serial(_year,_month,_day);
+    Date operator-(long long days) const{
+        long long s = to_serial(_year,_month,_day);
         Date r; from_serial(s-days, r._year,r._month,r._day);
         return r;
     }
 
-    long operator-(const Date& other) const{
-        long a = to_serial(_year,_month,_day);
-        long b = to_serial(other._year,other._month,other._day);
-        long diff = a-b; if(diff<0) diff = -diff; return diff;
+    long long operator-(const Date& other) const{
+        long long a = to_serial(_year,_month,_day);
+        long long b = to_serial(other._year,other._month,other._day);
+        long long diff = a-b; if(diff<0) diff = -diff; return diff;
     }
 
     bool operator<(const Date& other) const{
@@ -156,4 +164,3 @@ int main(){
     }
     return 0;
 }
-
